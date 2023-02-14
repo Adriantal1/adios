@@ -4,7 +4,7 @@ import Destinations from './Destinations'
 
 export default function Form() {
   return (
-    <div className='bg-white mt-20 rounded-xl p-5 flex justify-between items-center'>
+    <div className='bg-white mt-20 rounded-xl p-5 flex justify-between items-center max-w-7xl mx-auto'>
       REEEEEE
       <Button text="?" element={<Destinations />} />
       <Button text="?" element={<Destinations />} />

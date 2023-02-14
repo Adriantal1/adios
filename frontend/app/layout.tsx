@@ -8,7 +8,7 @@ export default function RootLayout({children,}: {children: React.ReactNode}) {
       <head />
       <body className="bg-[url('../public/images/background.jpg')] bg-no-repeat bg-cover">
         <Navbar />
-        <main className='px-20'>
+        <main className='px-2'>
           {children}
         </main>
         </body>

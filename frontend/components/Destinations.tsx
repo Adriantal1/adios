@@ -9,7 +9,7 @@ export default function Destinations() {
       <li><input type="checkbox" /><span className='pl-2'>Grecja</span></li>
       <li><input type="checkbox" /><span className='pl-2'>Turcja</span></li>
       </ul>
-      <button className='bg-blue-200 rounded-md p-1.5 mt-2 ml-auto'>Wyyszukaj</button>
+      <button className='bg-blue-200 rounded-md p-1.5 mt-2 ml-auto'>Wyszukaj</button>
     </div>
   )
 }
