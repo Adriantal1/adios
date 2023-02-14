@@ -8,6 +8,5 @@ export default function Home() {
       <Form />
       <Carousel />
     </div>
-    // <Offer/>
   )
 }
