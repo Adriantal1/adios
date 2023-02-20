@@ -18,8 +18,6 @@ export default function Carousel() {
 
   const pictures = [[Egypt,France,Bulgaria],[Malta,Italy,Cyprus],[Czechia,Iceland,Poland]]
 
-  // console.log(pictures.length)
-
   function decrementSlide() {
     if (slide>0) {
       setSlide(prevSlide => prevSlide - 1)
@@ -30,7 +28,6 @@ export default function Carousel() {
   function incrementSlide() {
     console.log(slide)
     if (slide<pictures.length-1) {
-      console.log("kurwa?")
       setSlide(prevSlide => prevSlide + 1)
       console.log(slide)
     }
