@@ -16,7 +16,11 @@ import { MdOutlineArrowForwardIos, MdOutlineArrowBackIosNew } from 'react-icons/
 export default function Carousel() {
   const [slide, setSlide] = useState(0)
 
-  const pictures = [[Egypt,France,Bulgaria],[Malta,Italy,Cyprus],[Czechia,Iceland,Poland]]
+  const pictures = [
+    [{ image: Egypt, text: 'Egypt' }, { image: France, text: 'France' }, { image: Bulgaria, text: 'Bulgaria' }],
+    [{ image: Malta, text: 'Malta' }, { image: Italy, text: 'Italy' }, { image: Cyprus, text: 'Cyprus' }],
+    [{ image: Czechia, text: 'Czechia' }, { image: Iceland, text: 'Iceland' }, { image: Poland, text: 'Poland' }],
+  ]
 
   function decrementSlide() {
     if (slide>0) {
@@ -38,9 +42,9 @@ export default function Carousel() {
     <div>
       <ul className='flex justify-center items-center mt-20'>
         <li><button><MdOutlineArrowBackIosNew onClick={decrementSlide} className='text-7xl text-white'/></button></li>
-        <li><Offer image={pictures[slide][0]} text="Egypt"/></li>
-        <li><Offer image={pictures[slide][1]} text="France"/></li>
-        <li><Offer image={pictures[slide][2]} text="Bulgaria"/></li>
+        <li><Offer image={pictures[slide][0].image} text={pictures[slide][0].text} /></li>
+        <li><Offer image={pictures[slide][1].image} text={pictures[slide][1].text} /></li>
+        <li><Offer image={pictures[slide][2].image} text={pictures[slide][2].text} /></li>
         <li><button><MdOutlineArrowForwardIos onClick={incrementSlide} className='text-7xl text-white'/></button></li>
       </ul>
     </div>
