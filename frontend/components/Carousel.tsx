@@ -17,9 +17,9 @@ export default function Carousel() {
   const [slide, setSlide] = useState(0)
 
   const pictures = [
-    [{ image: Egypt, text: 'Egypt' }, { image: France, text: 'France' }, { image: Bulgaria, text: 'Bulgaria' }],
-    [{ image: Malta, text: 'Malta' }, { image: Italy, text: 'Italy' }, { image: Cyprus, text: 'Cyprus' }],
-    [{ image: Czechia, text: 'Czechia' }, { image: Iceland, text: 'Iceland' }, { image: Poland, text: 'Poland' }],
+    [{ image: Egypt, text: 'Egypt', price: 3000, stars: 4}, { image: France, text: 'France', price: 2500, stars: 5 }, { image: Bulgaria, text: 'Bulgaria', price: 1501, stars: 4 }],
+    [{ image: Malta, text: 'Malta', price: 1329, stars: 4 }, { image: Italy, text: 'Italy', price: 1788, stars: 5 }, { image: Cyprus, text: 'Cyprus', price: 1699, stars: 3 }],
+    [{ image: Czechia, text: 'Czechia', price: 1058, stars: 4 }, { image: Iceland, text: 'Iceland', price: 8219, stars: 5 }, { image: Poland, text: 'Poland', price: 319, stars: 0 }],
   ]
 
   function decrementSlide() {
@@ -42,9 +42,30 @@ export default function Carousel() {
     <div>
       <ul className='flex justify-center items-center mt-20'>
         <li><button><MdOutlineArrowBackIosNew onClick={decrementSlide} className='text-7xl text-white'/></button></li>
-        <li><Offer image={pictures[slide][0].image} text={pictures[slide][0].text} /></li>
-        <li><Offer image={pictures[slide][1].image} text={pictures[slide][1].text} /></li>
-        <li><Offer image={pictures[slide][2].image} text={pictures[slide][2].text} /></li>
+        <li>
+          <Offer 
+            image={pictures[slide][0].image} 
+            text={pictures[slide][0].text}  
+            price={pictures[slide][0].price!}
+            stars={pictures[slide][0].stars!}
+          />
+        </li>
+        <li>
+          <Offer 
+          image={pictures[slide][1].image} 
+          text={pictures[slide][1].text} 
+          price={pictures[slide][1].price!}
+          stars={pictures[slide][1].stars!}
+          />
+        </li>
+        <li>
+          <Offer 
+          image={pictures[slide][2].image} 
+          text={pictures[slide][2].text} 
+          price={pictures[slide][2].price}
+          stars={pictures[slide][2].stars}
+          />
+        </li>
         <li><button><MdOutlineArrowForwardIos onClick={incrementSlide} className='text-7xl text-white'/></button></li>
       </ul>
     </div>
