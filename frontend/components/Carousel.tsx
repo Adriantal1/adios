@@ -1,6 +1,7 @@
 'use client'
+'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import Offer from '@/components/Offer'
 import Egypt from '@/public/images/egipt.png'
 import France from '@/public/images/francja.png'
@@ -15,7 +16,6 @@ import { MdOutlineArrowForwardIos, MdOutlineArrowBackIosNew } from 'react-icons/
 
 export default function Carousel() {
   // layout constants (px)
-  // Match Tailwind `max-w-sm` (24rem = 384px) so cards keep pre-animation size
   const MAX_CARD_WIDTH = 384
   const GAP = 12
   const VISIBLE_COUNT = 3
@@ -26,8 +26,10 @@ export default function Carousel() {
   const viewportRef = React.useRef<HTMLDivElement | null>(null)
 
   // trackIndex points into the extended array (with cloned head/tail) and drives transform
-  const [trackIndex, setTrackIndex] = useState(VISIBLE_COUNT)
-  const [disableTransition, setDisableTransition] = useState(false)
+  const [trackIndex, setTrackIndex] = React.useState(VISIBLE_COUNT)
+  const [disableTransition, setDisableTransition] = React.useState(false)
+  // prevent rapid clicks while a transition (or snap) is running
+  const [isAnimating, setIsAnimating] = React.useState(false)
 
   const items = [
     { image: Egypt, text: 'Egypt', price: 3000, stars: 4},
@@ -42,7 +44,6 @@ export default function Carousel() {
   ]
 
   const len = items.length
-
   const CLONE_COUNT = VISIBLE_COUNT
 
   const extended = [
@@ -69,19 +70,41 @@ export default function Carousel() {
 
   // move left (previous)
   function decrementSlide() {
+    if (isAnimating) return
+    setIsAnimating(true)
     setTrackIndex(prev => prev - 1)
   }
 
   // move right (next)
   function incrementSlide() {
+    if (isAnimating) return
+    setIsAnimating(true)
     setTrackIndex(prev => prev + 1)
   }
 
   // when we jump into cloned areas, reset trackIndex to the corresponding real index without transition
+  function handleTransitionEnd() {
+    if (trackIndex >= len + CLONE_COUNT) {
+      // animated into cloned tail — snap to real start
+      setDisableTransition(true)
+      setTrackIndex(CLONE_COUNT)
+    } else if (trackIndex < CLONE_COUNT) {
+      // animated into cloned head — snap to real end
+      setDisableTransition(true)
+      setTrackIndex(len + CLONE_COUNT - 1)
+    }
+    // always clear animating flag when a transition finishes
+    setIsAnimating(false)
+  }
+
+  // when a snap without transition completes, re-enable transitions
   React.useEffect(() => {
     if (!disableTransition) return
-    const t = setTimeout(() => setDisableTransition(false), 40)
-    return () => clearTimeout(t)
+    const t = requestAnimationFrame(() => {
+      // next frame ensure DOM has applied the non-transitioned transform
+      setDisableTransition(false)
+    })
+    return () => cancelAnimationFrame(t)
   }, [disableTransition])
 
   return (
@@ -100,21 +123,12 @@ export default function Carousel() {
         {/* track */}
         <div
           className="flex items-stretch"
-            onTransitionEnd={() => {
-              // when we've animated into cloned area, snap to corresponding real index without transition
-              if (trackIndex >= len + CLONE_COUNT) {
-                setDisableTransition(true)
-                setTrackIndex(CLONE_COUNT)
-              } else if (trackIndex < CLONE_COUNT) {
-                setDisableTransition(true)
-                setTrackIndex(len + CLONE_COUNT - 1)
-              }
-            }}
-            style={{
-              gap: `${GAP}px`,
-              transform: `translateX(-${trackIndex * (cardWidth + GAP)}px)`,
-              transition: disableTransition ? 'none' : 'transform 400ms ease'
-            }}
+          onTransitionEnd={handleTransitionEnd}
+          style={{
+            gap: `${GAP}px`,
+            transform: `translateX(-${trackIndex * (cardWidth + GAP)}px)`,
+            transition: disableTransition ? 'none' : 'transform 400ms ease'
+          }}
         >
           {extended.map((it, idx) => (
             <div key={`${it.text}-${idx}`} style={{ flex: '0 0 auto', width: `${cardWidth}px` }}>
