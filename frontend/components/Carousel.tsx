@@ -14,15 +14,15 @@ import Poland from '@/public/images/polska.png'
 import { MdOutlineArrowForwardIos, MdOutlineArrowBackIosNew } from 'react-icons/md'
 
 export default function Carousel() {
-  // start is the index of the left-most visible item
-  const [start, setStart] = useState(0)
-
-  // layout constants (px)
   // layout constants (px)
   // Match Tailwind `max-w-sm` (24rem = 384px) so cards keep pre-animation size
   const CARD_WIDTH = 384
   const GAP = 12
   const VISIBLE_COUNT = 3
+
+  // trackIndex points into the extended array (with cloned head/tail) and drives transform
+  const [trackIndex, setTrackIndex] = useState(VISIBLE_COUNT)
+  const [disableTransition, setDisableTransition] = useState(false)
 
   const items = [
     { image: Egypt, text: 'Egypt', price: 3000, stars: 4},
@@ -38,13 +38,30 @@ export default function Carousel() {
 
   const len = items.length
 
+  const CLONE_COUNT = VISIBLE_COUNT
+
+  const extended = [
+    ...items.slice(-CLONE_COUNT),
+    ...items,
+    ...items.slice(0, CLONE_COUNT)
+  ]
+
+  // move left (previous)
   function decrementSlide() {
-    setStart(prev => (prev - 1 + len) % len)
+    setTrackIndex(prev => prev - 1)
   }
 
+  // move right (next)
   function incrementSlide() {
-    setStart(prev => (prev + 1) % len)
+    setTrackIndex(prev => prev + 1)
   }
+
+  // when we jump into cloned areas, reset trackIndex to the corresponding real index without transition
+  React.useEffect(() => {
+    if (!disableTransition) return
+    const t = setTimeout(() => setDisableTransition(false), 40)
+    return () => clearTimeout(t)
+  }, [disableTransition])
 
   return (
     <div className="flex justify-center items-center mt-20">
@@ -61,13 +78,23 @@ export default function Carousel() {
         {/* track */}
         <div
           className="flex items-stretch"
-          style={{
-            gap: `${GAP}px`,
-            transform: `translateX(-${start * (CARD_WIDTH + GAP)}px)`,
-            transition: 'transform 400ms ease'
-          }}
+            onTransitionEnd={() => {
+              // when we've animated into cloned area, snap to corresponding real index without transition
+              if (trackIndex >= len + CLONE_COUNT) {
+                setDisableTransition(true)
+                setTrackIndex(CLONE_COUNT)
+              } else if (trackIndex < CLONE_COUNT) {
+                setDisableTransition(true)
+                setTrackIndex(len + CLONE_COUNT - 1)
+              }
+            }}
+            style={{
+              gap: `${GAP}px`,
+              transform: `translateX(-${trackIndex * (CARD_WIDTH + GAP)}px)`,
+              transition: disableTransition ? 'none' : 'transform 400ms ease'
+            }}
         >
-          {items.map((it, idx) => (
+          {extended.map((it, idx) => (
             <div key={`${it.text}-${idx}`} style={{ flex: '0 0 auto', width: `${CARD_WIDTH}px` }}>
               <Offer
                 image={it.image}
