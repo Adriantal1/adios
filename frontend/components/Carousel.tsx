@@ -31,6 +31,9 @@ export default function Carousel() {
   // prevent rapid clicks while a transition (or snap) is running
   const [isAnimating, setIsAnimating] = React.useState(false)
 
+  // aria-live message for screen readers
+  const [liveMessage, setLiveMessage] = React.useState<string>('')
+
   type CarouselItem = {
     image: any
     text: string
@@ -104,6 +107,35 @@ export default function Carousel() {
     setIsAnimating(false)
   }
 
+  // announce the current visible (real) slide for screen readers when animation completes
+  React.useEffect(() => {
+    if (isAnimating) return
+    const realIndex = ((trackIndex - CLONE_COUNT) % len + len) % len
+    const label = `${items[realIndex].text} (${realIndex + 1}/${len})`
+    setLiveMessage(label)
+  }, [trackIndex, isAnimating])
+
+  // keyboard navigation: left/right arrows, Home/End
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'ArrowLeft' || e.key === 'Left') {
+      e.preventDefault()
+      decrementSlide()
+    } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+      e.preventDefault()
+      incrementSlide()
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      if (isAnimating) return
+      setIsAnimating(true)
+      setTrackIndex(CLONE_COUNT)
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      if (isAnimating) return
+      setIsAnimating(true)
+      setTrackIndex(len + CLONE_COUNT - 1)
+    }
+  }
+
   // when a snap without transition completes, re-enable transitions
   React.useEffect(() => {
     if (!disableTransition) return
@@ -126,6 +158,9 @@ export default function Carousel() {
         className="overflow-hidden bg-transparent"
         style={{ width: '100%', maxWidth: `${MAX_VIEWPORT_WIDTH}px` }}
         aria-roledescription="carousel"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        aria-label="Offers carousel"
       >
         {/* track */}
         <div
@@ -157,6 +192,11 @@ export default function Carousel() {
             )
           })}
         </div>
+
+          {/* polite live region for screen reader announcements */}
+          <div aria-live="polite" role="status" className="sr-only">
+            {liveMessage}
+          </div>
       </div>
 
       <button aria-label="Next slide" onClick={incrementSlide} className="p-2 ml-4">
