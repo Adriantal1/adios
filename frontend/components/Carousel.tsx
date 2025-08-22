@@ -39,45 +39,35 @@ export default function Carousel() {
     setStart(prev => (prev + 1) % len)
   }
 
-  // widthPercent is the percent width per item (3 items visible)
-  const widthPercent = 100 / 3
-
   return (
-    <div className="mt-20">
-      <div className="relative">
-        <button aria-label="Previous slide" onClick={decrementSlide} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2">
-          <MdOutlineArrowBackIosNew className='text-5xl text-white'/>
-        </button>
-
-        <div className="overflow-hidden">
-          <div
-            className="flex will-change-transform"
-            style={{
-              width: `${(len) * 100 / 3}%`,
-              transform: `translateX(-${start * widthPercent}%)`,
-              transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)'
-            }}
-          >
-            {items.map((it) => (
-              <div key={it.text} className="flex-shrink-0" style={{ width: `${widthPercent}%` }}>
-                <div className="px-2">
-                  <Offer
-                    image={it.image}
-                    text={it.text}
-                    price={it.price}
-                    stars={it.stars}
-                    alt={`${it.text} photo`}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <button aria-label="Next slide" onClick={incrementSlide} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2">
-          <MdOutlineArrowForwardIos className='text-5xl text-white'/>
-        </button>
-      </div>
+    <div>
+  <ul className='flex justify-center items-center mt-20' role="list" aria-label="Featured destinations">
+        <li>
+          <button aria-label="Previous slide" onClick={decrementSlide} className="p-2">
+            <MdOutlineArrowBackIosNew className='text-7xl text-white'/>
+          </button>
+        </li>
+        {[
+          items[start % len],
+          items[(start + 1) % len],
+          items[(start + 2) % len]
+        ].map((it, idx) => (
+          <li key={it.text} className="mx-1">
+            <Offer
+              image={it.image}
+              text={it.text}
+              price={it.price}
+              stars={it.stars}
+              alt={`${it.text} photo`}
+            />
+          </li>
+        ))}
+        <li>
+          <button aria-label="Next slide" onClick={incrementSlide} className="p-2">
+            <MdOutlineArrowForwardIos className='text-7xl text-white'/>
+          </button>
+        </li>
+      </ul>
     </div>
   )
 }
