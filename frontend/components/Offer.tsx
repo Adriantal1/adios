@@ -2,16 +2,23 @@ import React from 'react'
 import Image, { StaticImageData } from 'next/image'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 
-export default function Offer({ image, text, price, stars, alt }:{ image: StaticImageData, text: string, price: number, stars: number, alt?: string }) {
-  function getRating() {
-    const ratings = []
+export interface OfferProps {
+  image: StaticImageData
+  text: string
+  price: number
+  stars: number
+  alt?: string
+}
 
-    for(let i = 0; i < 5; i++) {
-      if(i < stars) {
-  ratings.push(<AiFillStar key={i} />)
-      }
-      else {
-  ratings.push(<AiOutlineStar key={i} />)
+export default function Offer({ image, text, price, stars, alt }: OfferProps) {
+  function getRating() {
+    const ratings: JSX.Element[] = []
+
+    for (let i = 0; i < 5; i++) {
+      if (i < stars) {
+        ratings.push(<AiFillStar key={i} />)
+      } else {
+        ratings.push(<AiOutlineStar key={i} />)
       }
     }
 
