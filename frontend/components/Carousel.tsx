@@ -16,9 +16,14 @@ import { MdOutlineArrowForwardIos, MdOutlineArrowBackIosNew } from 'react-icons/
 export default function Carousel() {
   // layout constants (px)
   // Match Tailwind `max-w-sm` (24rem = 384px) so cards keep pre-animation size
-  const CARD_WIDTH = 384
+  const MAX_CARD_WIDTH = 384
   const GAP = 12
   const VISIBLE_COUNT = 3
+  const MAX_VIEWPORT_WIDTH = (MAX_CARD_WIDTH * VISIBLE_COUNT) + (GAP * (VISIBLE_COUNT - 1))
+
+  // dynamic card width (responsive). starts at MAX_CARD_WIDTH and is recalculated
+  const [cardWidth, setCardWidth] = React.useState<number>(MAX_CARD_WIDTH)
+  const viewportRef = React.useRef<HTMLDivElement | null>(null)
 
   // trackIndex points into the extended array (with cloned head/tail) and drives transform
   const [trackIndex, setTrackIndex] = useState(VISIBLE_COUNT)
@@ -46,6 +51,22 @@ export default function Carousel() {
     ...items.slice(0, CLONE_COUNT)
   ]
 
+  // update card width when viewport resizes
+  React.useEffect(() => {
+    const el = viewportRef.current
+    if (!el) return
+    const update = () => {
+      const w = el.clientWidth || MAX_VIEWPORT_WIDTH
+      const cw = (w - GAP * (VISIBLE_COUNT - 1)) / VISIBLE_COUNT
+      setCardWidth(Math.min(cw, MAX_CARD_WIDTH))
+    }
+
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   // move left (previous)
   function decrementSlide() {
     setTrackIndex(prev => prev - 1)
@@ -71,8 +92,9 @@ export default function Carousel() {
 
       {/* viewport */}
       <div
+        ref={viewportRef}
         className="overflow-hidden bg-transparent"
-        style={{ width: `${(CARD_WIDTH * VISIBLE_COUNT) + (GAP * (VISIBLE_COUNT - 1))}px` }}
+        style={{ width: '100%', maxWidth: `${MAX_VIEWPORT_WIDTH}px` }}
         aria-roledescription="carousel"
       >
         {/* track */}
@@ -90,12 +112,12 @@ export default function Carousel() {
             }}
             style={{
               gap: `${GAP}px`,
-              transform: `translateX(-${trackIndex * (CARD_WIDTH + GAP)}px)`,
+              transform: `translateX(-${trackIndex * (cardWidth + GAP)}px)`,
               transition: disableTransition ? 'none' : 'transform 400ms ease'
             }}
         >
           {extended.map((it, idx) => (
-            <div key={`${it.text}-${idx}`} style={{ flex: '0 0 auto', width: `${CARD_WIDTH}px` }}>
+            <div key={`${it.text}-${idx}`} style={{ flex: '0 0 auto', width: `${cardWidth}px` }}>
               <Offer
                 image={it.image}
                 text={it.text}
