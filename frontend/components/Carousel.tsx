@@ -18,7 +18,9 @@ export default function Carousel() {
   const [start, setStart] = useState(0)
 
   // layout constants (px)
-  const CARD_WIDTH = 240
+  // layout constants (px)
+  // Match Tailwind `max-w-sm` (24rem = 384px) so cards keep pre-animation size
+  const CARD_WIDTH = 384
   const GAP = 12
   const VISIBLE_COUNT = 3
 
