@@ -41,32 +41,43 @@ export default function Carousel() {
   return (
     <div>
       <ul className='flex justify-center items-center mt-20'>
-        <li><button><MdOutlineArrowBackIosNew onClick={decrementSlide} className='text-7xl text-white'/></button></li>
+        <li>
+          <button aria-label="Previous slide" onClick={decrementSlide} className="p-2">
+            <MdOutlineArrowBackIosNew className='text-7xl text-white'/>
+          </button>
+        </li>
         <li>
           <Offer 
             image={pictures[slide][0].image} 
             text={pictures[slide][0].text}  
             price={pictures[slide][0].price!}
             stars={pictures[slide][0].stars!}
+            alt={`${pictures[slide][0].text} photo`}
           />
         </li>
         <li>
           <Offer 
-          image={pictures[slide][1].image} 
-          text={pictures[slide][1].text} 
-          price={pictures[slide][1].price!}
-          stars={pictures[slide][1].stars!}
+            image={pictures[slide][1].image} 
+            text={pictures[slide][1].text} 
+            price={pictures[slide][1].price!}
+            stars={pictures[slide][1].stars!}
+            alt={`${pictures[slide][1].text} photo`}
           />
         </li>
         <li>
           <Offer 
-          image={pictures[slide][2].image} 
-          text={pictures[slide][2].text} 
-          price={pictures[slide][2].price}
-          stars={pictures[slide][2].stars}
+            image={pictures[slide][2].image} 
+            text={pictures[slide][2].text} 
+            price={pictures[slide][2].price}
+            stars={pictures[slide][2].stars}
+            alt={`${pictures[slide][2].text} photo`}
           />
         </li>
-        <li><button><MdOutlineArrowForwardIos onClick={incrementSlide} className='text-7xl text-white'/></button></li>
+        <li>
+          <button aria-label="Next slide" onClick={incrementSlide} className="p-2">
+            <MdOutlineArrowForwardIos className='text-7xl text-white'/>
+          </button>
+        </li>
       </ul>
     </div>
   )
