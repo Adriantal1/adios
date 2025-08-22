@@ -31,7 +31,14 @@ export default function Carousel() {
   // prevent rapid clicks while a transition (or snap) is running
   const [isAnimating, setIsAnimating] = React.useState(false)
 
-  const items = [
+  type CarouselItem = {
+    image: any
+    text: string
+    price: number
+    stars: number
+  }
+
+  const items: CarouselItem[] = [
     { image: Egypt, text: 'Egypt', price: 3000, stars: 4},
     { image: France, text: 'France', price: 2500, stars: 5 },
     { image: Bulgaria, text: 'Bulgaria', price: 1501, stars: 4 },
@@ -130,17 +137,25 @@ export default function Carousel() {
             transition: disableTransition ? 'none' : 'transform 400ms ease'
           }}
         >
-          {extended.map((it, idx) => (
-            <div key={`${it.text}-${idx}`} style={{ flex: '0 0 auto', width: `${cardWidth}px` }}>
-              <Offer
-                image={it.image}
-                text={it.text}
-                price={it.price}
-                stars={it.stars}
-                alt={`${it.text} photo`}
-              />
-            </div>
-          ))}
+          {extended.map((it, idx) => {
+            const isClone = idx < CLONE_COUNT || idx >= CLONE_COUNT + len
+            return (
+              <div
+                key={`${it.text}-${idx}`}
+                style={{ flex: '0 0 auto', width: `${cardWidth}px` }}
+                aria-hidden={isClone}
+                tabIndex={isClone ? -1 : undefined}
+              >
+                <Offer
+                  image={it.image}
+                  text={it.text}
+                  price={it.price}
+                  stars={it.stars}
+                  alt={`${it.text} photo`}
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
 
